@@ -80,7 +80,7 @@ def train(args: Namespace):
 
         train_loss, train_acc = eval_epoch(model, loss_func, train_loader)
         log_str += (
-            f"train: (acc: {train_acc * 100:.2f}% loss: {train_loss:.4f} "
+            f"train: (acc: {train_acc * 100:.2f}% loss: {train_loss:.4f}) "
         )
 
         val_acc, ood_acc = eval_epoch_with_ood(

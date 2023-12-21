@@ -23,14 +23,23 @@ def download():
 
 
 def prepare_model(
-    num_classes: int = 1000, method="resnet18", state_dict_path: str = None
+    num_classes: int = 1000,
+    method="resnet18",
+    state_dict_path: str = None,
+    finetune=True,
 ) -> nn.Module:
     with accelerator.local_main_process_first():
         if method == "resnet18":
             model = resnet18(weights=ResNet18_Weights.DEFAULT)
+            if finetune:
+                for p in model.parameters():
+                    p.requires_grad = False
             model.fc = nn.Linear(model.fc.in_features, num_classes)
         elif method == "vit":
             model = vit_b_16(weights=ViT_B_16_Weights.IMAGENET1K_SWAG_E2E_V1)
+            if finetune:
+                for p in model.parameters():
+                    p.requires_grad = False
             model.heads = nn.Linear(
                 in_features=model.heads[0].in_features, out_features=num_classes
             )

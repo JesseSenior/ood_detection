@@ -92,7 +92,7 @@ def plot_log(filename):
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax1.legend([], [], frameon=False)
     ax2.legend(lines + lines2, labels + labels2)
-    sns.move_legend(ax2, "upper left", bbox_to_anchor=(1.1, 1))
+    sns.move_legend(ax2, "upper left", bbox_to_anchor=(1.08, 1))
 
     plt.title("Training Progress")
     plt.savefig(str(Path(filename).parent / "training_progress.pdf"))
@@ -172,7 +172,7 @@ def plot_graphs(model, dataloader, save_dir):
         sns.lineplot(
             x=fpr,
             y=tpr,
-            label=f"{key} (area = {roc_auc:.2f})",
+            label=f"{inv_model_state_key[key] if key != 'OOD' else key} (area = {roc_auc:.2f})",
         )
 
     plt.plot([0, 1], [0, 1], color="navy", linestyle="--")
@@ -181,7 +181,7 @@ def plot_graphs(model, dataloader, save_dir):
     plt.xlabel("False Positive Rate")
     plt.ylabel("True Positive Rate")
     plt.title("Receiver Operating Characteristic")
-    plt.legend(loc="lower right")
+    plt.legend(loc="lower right", ncol=2)
     plt.savefig(str(Path(save_dir) / "ROC.pdf"))
 
     plt.figure()
@@ -191,7 +191,7 @@ def plot_graphs(model, dataloader, save_dir):
         sns.lineplot(
             x=recall,
             y=precision,
-            label=f"{key}",
+            label=f"{inv_model_state_key[key] if key != 'OOD' else key}",
         )
 
     plt.plot([0, 1], [1, 0], color="navy", linestyle="--")
@@ -200,7 +200,7 @@ def plot_graphs(model, dataloader, save_dir):
     plt.xlabel("Recall")
     plt.ylabel("Precision")
     plt.title("Precision-Recall Curve")
-    plt.legend(loc="lower left")
+    plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
     plt.savefig(str(Path(save_dir) / "P-R.pdf"))
 
     tsne = TSNE(random_state=0).fit_transform(features)
@@ -215,8 +215,9 @@ def plot_graphs(model, dataloader, save_dir):
     legend = plt.gca().legend_
     labels = [t.get_text() for t in legend.texts]
     plt.legend(
-        loc="lower right",
-        labels=["OOD"] + [model_state_key[int(x) - 1] for x in labels[1:]],
+        loc="lower left",
+        labels=["OOD"] + [str(int(x) - 1) for x in labels[1:]],
+        bbox_to_anchor=(1, 0),
     )
     plt.title("t-SNE Plot")
     plt.savefig(str(Path(save_dir) / "t-SNE.pdf"))

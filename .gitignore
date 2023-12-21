@@ -2,6 +2,9 @@
 /*.csv
 /*.pdf
 /weights/
+/*.slurm
+/logs/
+/.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
